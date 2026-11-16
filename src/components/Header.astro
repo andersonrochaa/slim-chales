@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/images/logo-slim-chales.png';
+import { comBase } from '../lib/site';
 
 const links = [
   { href: '#kits', texto: 'Kits' },
@@ -11,7 +12,7 @@ const links = [
 
 <header id="topo" class="border-b border-linha">
   <div class="container-site flex flex-wrap items-center justify-between gap-x-3 py-3 sm:gap-x-8">
-    <a href="/" class="shrink-0" aria-label="Slim Chalés, voltar ao início">
+    <a href={comBase('/')} class="shrink-0" aria-label="Slim Chalés, voltar ao início">
       <Image src={logo} alt="Slim Chalés" height={68} densities={[1, 2, 3]} loading="eager" class="h-14 w-auto sm:h-[4.25rem]" />
     </a>
 

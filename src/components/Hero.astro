@@ -2,6 +2,7 @@
 import { Image, getImage } from 'astro:assets';
 import { entrega, kits, linkWhatsapp } from '../data/conteudo';
 import { fotoBanner, qualidadeFoto } from '../data/imagens';
+import { comBase } from '../lib/site';
 
 // AVIF (menor) com WebP de reserva, nos dois recortes. É a imagem que define o LCP.
 const larguras = { celular: [480, 640, 720, 800, 1000], desktop: [560, 720, 860, 1024] };
@@ -40,10 +41,10 @@ const numeros = [...kits.map((k) => ({ valor: k.area, legenda: k.nome })), { val
       <video
         id="banner-video"
         class="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-700"
-        data-av1-desktop="/videos/chale-a-frame-banner-desktop-av1.mp4"
-        data-h264-desktop="/videos/chale-a-frame-banner-desktop.mp4"
-        data-av1-celular="/videos/chale-a-frame-banner-celular-av1.mp4"
-        data-h264-celular="/videos/chale-a-frame-banner-celular.mp4"
+        data-av1-desktop={comBase('/videos/chale-a-frame-banner-desktop-av1.mp4')}
+        data-h264-desktop={comBase('/videos/chale-a-frame-banner-desktop.mp4')}
+        data-av1-celular={comBase('/videos/chale-a-frame-banner-celular-av1.mp4')}
+        data-h264-celular={comBase('/videos/chale-a-frame-banner-celular.mp4')}
         muted
         loop
         playsinline

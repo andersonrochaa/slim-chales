@@ -10,6 +10,7 @@ import plex400 from '@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-nor
 import '../styles/global.css';
 import { empresa } from '../data/conteudo';
 import { fotosKit, imagensParaBusca } from '../data/imagens';
+import { comBase, raizDoSite, versaoDeTeste } from '../lib/site';
 
 interface Props {
   title: string;
@@ -23,10 +24,10 @@ interface Props {
 const { title, description, tituloSocial = title, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 // Imagem de compartilhamento: 1200 x 630 (proporção 1,91:1), em JPEG para funcionar em todo app.
-const { compartilhamento } = await imagensParaBusca(Astro.site!);
+const { compartilhamento } = await imagensParaBusca(raizDoSite(Astro.site!));
 const ogUrl = new URL(compartilhamento.url);
 const ogAlt = fotosKit.rio.alt;
-const robots = noindex
+const robots = noindex || versaoDeTeste
   ? 'noindex, follow'
   : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 ---
@@ -46,16 +47,16 @@ const robots = noindex
     <link rel="preload" href={plex400} as="font" type="font/woff2" crossorigin />
 
     <!-- Ícones: .ico com 16, 32 e 48 px e PNG de 96 px (o Google pede múltiplos de 48), SVG para navegadores novos -->
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" href={comBase('/favicon.ico')} sizes="any" />
+    <link rel="icon" href={comBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={comBase('/favicon-96x96.png')} type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href={comBase('/apple-touch-icon.png')} />
+    <link rel="manifest" href={comBase('/site.webmanifest')} />
     <meta name="theme-color" content="#0b0b0b" />
     <meta name="color-scheme" content="dark" />
     <meta name="application-name" content={empresa.nome} />
     <meta name="apple-mobile-web-app-title" content={empresa.nome} />
-    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+    <link rel="sitemap" type="application/xml" href={comBase('/sitemap.xml')} />
 
     <!-- Compartilhamento (WhatsApp, Facebook, Instagram, LinkedIn) -->
     <meta property="og:type" content="website" />

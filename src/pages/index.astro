@@ -10,6 +10,7 @@ import Contato from '../components/Contato.astro';
 import Footer from '../components/Footer.astro';
 import { empresa, instagram, kits } from '../data/conteudo';
 import { fotosKit, imagensParaBusca } from '../data/imagens';
+import { raizDoSite } from '../lib/site';
 
 const titulo = 'Kits de chalés A-frame em madeira de lei | Slim Chalés';
 const descricao =
@@ -17,8 +18,9 @@ const descricao =
 
 // Dados estruturados (schema.org) para o Google entender a empresa e os kits.
 // Itens ainda [entre colchetes] em conteudo.ts ficam de fora até serem preenchidos.
-const raiz = new URL('/', Astro.site);
-const abs = (caminho: string) => new URL(caminho, raiz).href;
+const raiz = raizDoSite(Astro.site!);
+// Caminhos relativos à raiz do site (funciona na Vercel e no GitHub Pages, em /slim-chales/).
+const abs = (caminho: string) => new URL(caminho.replace(/^\//, ''), raiz).href;
 const preenchido = (v: string) => !v.trim().startsWith('[');
 const { kits: fotos } = await imagensParaBusca(raiz);
 const idOrganizacao = abs('/#organizacao');

@@ -225,6 +225,12 @@ const rotulo = 'mb-2 block text-[0.9375rem] font-medium text-texto-2';
       return;
     }
 
+    // Versão de teste (GitHub Pages): valida os campos, mas não envia nada.
+    if (import.meta.env.PUBLIC_DEMO === 'true') {
+      mostrarStatus('Versão de teste do site: o envio do formulário está desligado. Fale com a gente pelo WhatsApp.', 'info');
+      return;
+    }
+
     botao.disabled = true;
     botao.setAttribute('aria-busy', 'true');
     mostrarStatus('Enviando…', 'info');

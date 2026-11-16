@@ -76,6 +76,14 @@ Para indexar:
 - `CONTACT_FROM_EMAIL` precisa ser de um domínio verificado no Resend.
 - Turnstile: preencha `PUBLIC_TURNSTILE_SITE_KEY` e `TURNSTILE_SECRET_KEY` para ligar; deixe vazio para desligar.
 
+## Versão de teste no GitHub Pages
+
+Para validar o design, o site também é publicado em `https://andersonrochaa.github.io/slim-chales/` pelo workflow `.github/workflows/github-pages.yml`, a cada push na `main`.
+
+- Primeira vez: o repositório precisa ser público (ou ter GitHub Pro). Depois, em Settings → Pages → Build and deployment → Source, escolha "GitHub Actions". Se o primeiro workflow falhou antes disso, rode de novo em Actions → "Publicar no GitHub Pages" → "Run workflow".
+- Essa versão é só estática: o workflow tira a rota `/api/contato`, o formulário valida os campos mas não envia (aviso de "versão de teste") e a página leva `noindex`, para não competir no Google com o site oficial.
+- Os caminhos internos usam `comBase()` (`src/lib/site.ts`), porque no Pages o site fica em `/slim-chales/`. Na Vercel o `base` fica vazio e nada muda.
+
 ## Deploy (Vercel)
 
 Importe o repositório na Vercel e cadastre as variáveis do `.env.example` em Settings → Environment Variables. `SITE_URL` é opcional (sem ela, usa o domínio de produção da Vercel).
