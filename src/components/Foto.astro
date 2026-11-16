@@ -1,0 +1,23 @@
+---
+// Foto em AVIF (menor) com WebP de reserva. A qualidade é separada por formato:
+// no mesmo número, o AVIF sai maior que o WebP.
+import { Image, getImage } from 'astro:assets';
+import { qualidadeFoto } from '../data/imagens';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  widths: number[];
+  sizes: string;
+  class?: string;
+  priority?: boolean;
+}
+
+const { src, alt, widths, sizes, class: classe, priority = false } = Astro.props;
+const avif = await getImage({ src, widths, format: 'avif', quality: qualidadeFoto.avif });
+---
+
+<picture>
+  <source type="image/avif" srcset={avif.srcSet.attribute} sizes={sizes} />
+  <Image src={src} alt={alt} widths={widths} sizes={sizes} quality={qualidadeFoto.webp} priority={priority} class={classe} />
+</picture>

@@ -1,0 +1,254 @@
+---
+import { PUBLIC_TURNSTILE_SITE_KEY } from 'astro:env/client';
+import { entrega, linkWhatsapp, opcoesKit, opcoesMontagem } from '../data/conteudo';
+
+const rotulo = 'mb-2 block text-[0.9375rem] font-medium text-texto-2';
+---
+
+<section id="contato" aria-labelledby="titulo-contato" class="border-t border-linha py-16 md:py-28">
+  <div class="container-site grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-16">
+    <div>
+      <h2 id="titulo-contato" class="text-5xl leading-[0.95] font-bold lg:text-[4rem]">Peça o orçamento do seu kit</h2>
+      <p class="mt-5 max-w-[32rem] text-lg text-texto-2">
+        Preencha o formulário e a nossa equipe responde por <span class="whitespace-nowrap">e-mail</span>. O frete é grátis {entrega.freteGratis}. Para outras
+        cidades, calculamos no orçamento. Se preferir, chame direto no WhatsApp.
+      </p>
+      <a href={linkWhatsapp} target="_blank" rel="noopener" class="btn btn-secundario mt-8">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
+        </svg>
+        Conversar no WhatsApp
+      </a>
+    </div>
+
+    <form
+      id="form-orcamento"
+      action="/api/contato"
+      method="post"
+      novalidate
+      class="grid gap-x-5 gap-y-6 border-t-2 border-laranja pt-8 sm:grid-cols-2"
+    >
+      <div>
+        <label for="nome" class={rotulo}>Nome</label>
+        <input id="nome" name="nome" type="text" required maxlength="100" autocomplete="name" placeholder="Seu nome" class="campo" aria-describedby="erro-nome" />
+        <p id="erro-nome" class="mt-1.5 text-sm text-erro" hidden></p>
+      </div>
+      <div>
+        <label for="whatsapp" class={rotulo}>WhatsApp</label>
+        <input
+          id="whatsapp"
+          name="whatsapp"
+          type="tel"
+          required
+          minlength="10"
+          maxlength="30"
+          inputmode="tel"
+          autocomplete="tel"
+          placeholder="(00) 00000-0000"
+          class="campo"
+          aria-describedby="erro-whatsapp"
+        />
+        <p id="erro-whatsapp" class="mt-1.5 text-sm text-erro" hidden></p>
+      </div>
+      <div class="sm:col-span-2">
+        <label for="email" class={rotulo}>E-mail</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          maxlength="254"
+          autocomplete="email"
+          placeholder="voce@email.com"
+          class="campo"
+          aria-describedby="erro-email"
+        />
+        <p id="erro-email" class="mt-1.5 text-sm text-erro" hidden></p>
+      </div>
+      <div>
+        <label for="kit" class={rotulo}>Kit de interesse</label>
+        <select id="kit" name="kit" required class="campo" aria-describedby="erro-kit">
+          <option value="" disabled selected>Escolha o kit</option>
+          {opcoesKit.map((k) => <option value={k.valor}>{k.texto}</option>)}
+        </select>
+        <p id="erro-kit" class="mt-1.5 text-sm text-erro" hidden></p>
+      </div>
+      <div>
+        <label for="cidade" class={rotulo}>Cidade do terreno</label>
+        <input
+          id="cidade"
+          name="cidade"
+          type="text"
+          required
+          maxlength="120"
+          autocomplete="address-level2"
+          placeholder="Cidade / UF"
+          class="campo"
+          aria-describedby="erro-cidade"
+        />
+        <p id="erro-cidade" class="mt-1.5 text-sm text-erro" hidden></p>
+      </div>
+      <div class="sm:col-span-2">
+        <label for="montagem" class={rotulo}>Montagem</label>
+        <select id="montagem" name="montagem" required class="campo" aria-describedby="erro-montagem">
+          {opcoesMontagem.map((m) => <option value={m}>{m}</option>)}
+        </select>
+        <p id="erro-montagem" class="mt-1.5 text-sm text-erro" hidden></p>
+      </div>
+      <div class="sm:col-span-2">
+        <label for="mensagem" class={rotulo}>Mensagem</label>
+        <textarea
+          id="mensagem"
+          name="mensagem"
+          rows="4"
+          maxlength="2000"
+          placeholder="Conte um pouco sobre o seu projeto"
+          class="campo resize-y"
+          aria-describedby="erro-mensagem"></textarea>
+        <p id="erro-mensagem" class="mt-1.5 text-sm text-erro" hidden></p>
+      </div>
+
+      <!-- Armadilha para robôs: pessoas não veem nem preenchem este campo -->
+      <div class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+        <label for="empresa">Empresa</label>
+        <input id="empresa" name="empresa" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
+      {
+        PUBLIC_TURNSTILE_SITE_KEY && (
+          <div class="sm:col-span-2">
+            <div class="cf-turnstile" data-sitekey={PUBLIC_TURNSTILE_SITE_KEY} data-theme="dark" data-language="pt-br" />
+          </div>
+        )
+      }
+
+      <div class="sm:col-span-2">
+        <div class="flex flex-col-reverse gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <p class="max-w-[17rem] text-sm text-texto-3">Usamos seus dados só para responder ao seu pedido.</p>
+          <button type="submit" class="btn btn-primario w-full sm:w-auto sm:px-7">Enviar pedido</button>
+        </div>
+        <p id="form-status" role="status" aria-live="polite" class="mt-4 min-h-6 text-[0.9375rem]"></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  type Resposta = { ok?: boolean; erro?: string; campos?: Record<string, string> };
+  type Turnstile = { reset: () => void };
+
+  const form = document.getElementById('form-orcamento') as HTMLFormElement | null;
+  const status = document.getElementById('form-status');
+  const selectKit = document.getElementById('kit') as HTMLSelectElement | null;
+  const botao = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+  // Botões "Orçar Kit ...": rolam até o formulário com o kit já escolhido.
+  document.addEventListener('click', (e) => {
+    const link = (e.target as Element).closest<HTMLAnchorElement>('a[data-kit]');
+    if (!link || !selectKit || !form) return;
+    e.preventDefault();
+    selectKit.value = link.dataset.kit!;
+    limparErro('kit');
+    const suave = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.getElementById('contato')?.scrollIntoView({ behavior: suave ? 'smooth' : 'auto' });
+    history.replaceState(null, '', '#contato');
+    setTimeout(() => document.getElementById('nome')?.focus({ preventScroll: true }), suave ? 600 : 0);
+  });
+
+  // Turnstile (se configurado) só carrega quando o formulário chega perto da tela.
+  const widget = form?.querySelector('.cf-turnstile');
+  if (widget) {
+    const obs = new IntersectionObserver(
+      (entradas) => {
+        if (!entradas.some((e) => e.isIntersecting)) return;
+        obs.disconnect();
+        const s = document.createElement('script');
+        s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+        s.async = true;
+        document.head.append(s);
+      },
+      { rootMargin: '400px 0px' },
+    );
+    obs.observe(widget);
+  }
+
+  function mostrarStatus(texto: string, tipo: 'info' | 'ok' | 'erro') {
+    if (!status) return;
+    status.textContent = texto;
+    status.className = 'mt-4 min-h-6 text-[0.9375rem] ' + { info: 'text-texto-2', ok: 'text-texto', erro: 'text-erro' }[tipo];
+  }
+
+  function marcarErro(campo: string, mensagem: string) {
+    const input = form?.elements.namedItem(campo) as HTMLElement | null;
+    const p = document.getElementById(`erro-${campo}`);
+    input?.setAttribute('aria-invalid', 'true');
+    if (p) {
+      p.textContent = mensagem;
+      p.hidden = false;
+    }
+  }
+
+  function limparErro(campo: string) {
+    const input = form?.elements.namedItem(campo) as HTMLElement | null;
+    input?.removeAttribute('aria-invalid');
+    const p = document.getElementById(`erro-${campo}`);
+    if (p) p.hidden = true;
+  }
+
+  const mensagensLocais: Record<string, string> = {
+    nome: 'Informe o seu nome.',
+    whatsapp: 'Informe um WhatsApp com DDD.',
+    email: 'Informe um e-mail válido.',
+    kit: 'Escolha um kit ou "Ainda não sei".',
+    cidade: 'Informe a cidade do terreno.',
+    montagem: 'Escolha uma opção de montagem.',
+  };
+
+  form?.addEventListener('input', (e) => limparErro((e.target as HTMLInputElement).name));
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form || !botao) return;
+
+    let primeiroInvalido: HTMLElement | null = null;
+    for (const [campo, msg] of Object.entries(mensagensLocais)) {
+      const el = form.elements.namedItem(campo) as HTMLInputElement;
+      if (el.checkValidity()) limparErro(campo);
+      else {
+        marcarErro(campo, msg);
+        primeiroInvalido ??= el;
+      }
+    }
+    if (primeiroInvalido) {
+      mostrarStatus('Confira os campos destacados.', 'erro');
+      primeiroInvalido.focus();
+      return;
+    }
+
+    botao.disabled = true;
+    botao.setAttribute('aria-busy', 'true');
+    mostrarStatus('Enviando…', 'info');
+
+    try {
+      const r = await fetch('/api/contato', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify(Object.fromEntries(new FormData(form))),
+      });
+      const dados: Resposta = await r.json().catch(() => ({}));
+      if (r.ok && dados.ok) {
+        form.reset();
+        mostrarStatus('Pedido enviado. A nossa equipe vai responder por e-mail.', 'ok');
+      } else {
+        for (const [campo, msg] of Object.entries(dados.campos ?? {})) marcarErro(campo, msg);
+        mostrarStatus(dados.erro ?? 'Não foi possível enviar agora. Tente de novo ou fale pelo WhatsApp.', 'erro');
+      }
+    } catch {
+      mostrarStatus('Sem conexão com o servidor. Verifique a internet e tente de novo, ou fale pelo WhatsApp.', 'erro');
+    } finally {
+      botao.disabled = false;
+      botao.removeAttribute('aria-busy');
+      (window as Window & { turnstile?: Turnstile }).turnstile?.reset();
+    }
+  });
+</script>

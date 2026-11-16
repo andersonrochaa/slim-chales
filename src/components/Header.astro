@@ -1,0 +1,34 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/images/logo-slim-chales.png';
+
+const links = [
+  { href: '#kits', texto: 'Kits' },
+  { href: '#o-que-vem', texto: 'O que vem no kit' },
+  { href: '#como-funciona', texto: 'Como funciona' },
+];
+---
+
+<header id="topo" class="border-b border-linha">
+  <div class="container-site flex flex-wrap items-center justify-between gap-x-3 py-3 sm:gap-x-8">
+    <a href="/" class="shrink-0" aria-label="Slim Chalés, voltar ao início">
+      <Image src={logo} alt="Slim Chalés" height={68} densities={[1, 2, 3]} loading="eager" class="h-14 w-auto sm:h-[4.25rem]" />
+    </a>
+
+    <nav aria-label="Principal" class="order-last -mx-4 mt-3 w-[calc(100%+2rem)] border-t border-linha px-4 pt-2.5 md:order-none md:mx-0 md:mt-0 md:ml-auto md:w-auto md:border-0 md:p-0">
+      <ul class="flex flex-wrap gap-x-6 gap-y-1 text-[0.9375rem] md:gap-x-8">
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href} class="inline-block py-1.5 underline-offset-4 hover:underline">
+                {l.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a href="#contato" class="btn btn-primario min-h-10 px-3.5 text-[0.9375rem] sm:min-h-11 sm:px-5">Pedir orçamento</a>
+  </div>
+</header>

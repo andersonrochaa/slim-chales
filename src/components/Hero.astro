@@ -1,0 +1,160 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { entrega, kits, linkWhatsapp } from '../data/conteudo';
+import { fotoBanner, qualidadeFoto } from '../data/imagens';
+
+// AVIF (menor) com WebP de reserva, nos dois recortes. É a imagem que define o LCP.
+const larguras = { celular: [480, 640, 720, 800, 1000], desktop: [560, 720, 860, 1024] };
+const versao = (src: ImageMetadata, widths: number[], format: 'avif' | 'webp') =>
+  getImage({ src, widths, format, quality: qualidadeFoto[format] });
+const [desktopAvif, desktopWebp, celularAvif] = await Promise.all([
+  versao(fotoBanner.desktop, larguras.desktop, 'avif'),
+  versao(fotoBanner.desktop, larguras.desktop, 'webp'),
+  versao(fotoBanner.celular, larguras.celular, 'avif'),
+]);
+const tamanhoDesktop = '(min-width: 1320px) 676px, 52vw';
+const tamanhoCelular = 'calc(100vw - 2rem)';
+
+const numeros = [...kits.map((k) => ({ valor: k.area, legenda: k.nome })), { valor: '1 ou 2', legenda: 'quartos' }];
+---
+
+<section aria-labelledby="titulo-hero" class="pt-6 sm:pt-10 lg:pt-14">
+  <div class="container-site grid items-center gap-x-14 gap-y-9 lg:grid-cols-[minmax(0,1.27fr)_minmax(0,1fr)]">
+    <!-- 4:3 no celular; recorte mais alto no desktop, para acompanhar o texto.
+         A foto aparece primeiro (é o LCP); o vídeo entra por cima depois que a página carregou. -->
+    <div class="relative aspect-[4/3] overflow-hidden rounded-sm bg-fundo-2 lg:aspect-[1024/1086]">
+      <picture>
+        <source media="(min-width: 1024px)" type="image/avif" srcset={desktopAvif.srcSet.attribute} sizes={tamanhoDesktop} />
+        <source media="(min-width: 1024px)" type="image/webp" srcset={desktopWebp.srcSet.attribute} sizes={tamanhoDesktop} />
+        <source type="image/avif" srcset={celularAvif.srcSet.attribute} sizes={tamanhoCelular} />
+        <Image
+          src={fotoBanner.celular}
+          alt={fotoBanner.alt}
+          widths={larguras.celular}
+          sizes={tamanhoCelular}
+          quality={qualidadeFoto.webp}
+          priority
+          class="absolute inset-0 size-full object-cover"
+        />
+      </picture>
+      <video
+        id="banner-video"
+        class="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-700"
+        data-av1-desktop="/videos/chale-a-frame-banner-desktop-av1.mp4"
+        data-h264-desktop="/videos/chale-a-frame-banner-desktop.mp4"
+        data-av1-celular="/videos/chale-a-frame-banner-celular-av1.mp4"
+        data-h264-celular="/videos/chale-a-frame-banner-celular.mp4"
+        muted
+        loop
+        playsinline
+        preload="none"
+        disablepictureinpicture
+        aria-hidden="true"
+      ></video>
+      <button
+        id="banner-video-botao"
+        type="button"
+        hidden
+        aria-label="Pausar vídeo"
+        class="absolute bottom-3 left-3 z-10 grid size-10 place-items-center rounded-sm border border-linha-forte bg-fundo/80 text-texto-2 hover:text-texto"
+      >
+        <span data-icone="pausar" class="leading-none"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 2h3v10H3zM8 2h3v10H8z" fill="currentColor"></path></svg></span>
+        <span data-icone="tocar" hidden class="leading-none"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"></path></svg></span>
+      </button>
+    </div>
+
+    <div>
+      <h1 id="titulo-hero" class="text-[2.75rem] leading-[0.95] font-bold sm:text-6xl lg:text-[4.25rem] lg:[text-wrap:wrap] xl:text-[5.25rem]">
+        Kits de chalés <span class="whitespace-nowrap">A-frame</span> para montar no seu terreno
+      </h1>
+      <p class="mt-6 max-w-[33rem] text-lg text-texto-2">
+        Feitos em madeira de lei, com telhas ecológicas. São dois tamanhos, e os dois têm sala e cozinha integradas e
+        varanda na frente.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="#kits" class="btn btn-primario">Ver os kits</a>
+        <a href={linkWhatsapp} class="btn btn-secundario" target="_blank" rel="noopener">Falar no WhatsApp</a>
+      </div>
+      <dl class="mt-10 grid grid-cols-3 border-t border-linha pt-6">
+        {
+          numeros.map((n, i) => (
+            <div class:list={['flex flex-col-reverse', i > 0 && 'border-l border-linha pl-4 sm:pl-6']}>
+              <dt class="mt-1.5 text-sm text-texto-3">{n.legenda}</dt>
+              <dd class="font-display text-[1.75rem] leading-none font-semibold whitespace-nowrap sm:text-[2.5rem]">{n.valor}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <p class="mt-7 text-texto-2">
+        Entrega em até <strong class="font-semibold text-texto">{entrega.prazo}</strong> após o pagamento, com{' '}
+        <strong class="font-semibold text-texto">frete grátis</strong>{' '}{entrega.freteGratis}.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // O vídeo (0,6 a 0,9 MB) só é baixado depois que a página terminou de carregar, na versão certa:
+  // recorte de desktop ou de celular (mesmo ponto de quebra do layout) e AV1 quando o navegador suporta.
+  const video = document.getElementById('banner-video') as HTMLVideoElement | null;
+  const botao = document.getElementById('banner-video-botao') as HTMLButtonElement | null;
+
+  if (video && botao) {
+    const conexao = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    const reduzir = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const automatico = !conexao?.saveData && !reduzir;
+    let pausadoPelaPessoa = !automatico;
+    let carregado = false;
+
+    const atualizarBotao = () => {
+      const tocando = !video.paused;
+      botao.setAttribute('aria-label', tocando ? 'Pausar vídeo' : 'Reproduzir vídeo');
+      botao.querySelector('[data-icone="pausar"]')?.toggleAttribute('hidden', !tocando);
+      botao.querySelector('[data-icone="tocar"]')?.toggleAttribute('hidden', tocando);
+    };
+
+    const carregar = () => {
+      if (carregado) return;
+      carregado = true;
+      const desktop = matchMedia('(min-width: 1024px)').matches;
+      const av1 = video.canPlayType('video/mp4; codecs="av01.0.05M.08"') !== '';
+      const chave = `${av1 ? 'av1' : 'h264'}${desktop ? 'Desktop' : 'Celular'}` as const;
+      video.src = video.dataset[chave]!;
+      video.addEventListener('playing', () => video.classList.remove('opacity-0'), { once: true });
+    };
+
+    const tocar = () => {
+      carregar();
+      video.play().then(atualizarBotao).catch(atualizarBotao);
+    };
+
+    video.addEventListener('pause', atualizarBotao);
+    video.addEventListener('play', atualizarBotao);
+
+    botao.addEventListener('click', () => {
+      if (video.paused) {
+        pausadoPelaPessoa = false;
+        tocar();
+      } else {
+        pausadoPelaPessoa = true;
+        video.pause();
+      }
+    });
+
+    // Pausa quando o banner sai da tela, para não gastar bateria nem dados.
+    new IntersectionObserver(([e]) => {
+      if (!carregado || pausadoPelaPessoa) return;
+      if (e.isIntersecting) tocar();
+      else video.pause();
+    }).observe(video);
+
+    botao.hidden = false;
+    atualizarBotao();
+    if (automatico) {
+      const iniciar = () =>
+        'requestIdleCallback' in window ? requestIdleCallback(tocar, { timeout: 2000 }) : setTimeout(tocar, 800);
+      if (document.readyState === 'complete') iniciar();
+      else addEventListener('load', iniciar, { once: true });
+    }
+  }
+</script>

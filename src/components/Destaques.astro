@@ -1,0 +1,52 @@
+---
+import Foto from './Foto.astro';
+import { kits } from '../data/conteudo';
+import { fotosKit } from '../data/imagens';
+const imagem = 'aspect-square w-full rounded-lg';
+const seta = 'ml-1.5 inline-block transition-transform group-hover:translate-x-0.5';
+---
+
+<section aria-labelledby="titulo-destaques" class="pt-20 pb-16 md:pt-28 md:pb-24">
+  <div class="container-site">
+    <h2 id="titulo-destaques" class="font-sans text-2xl leading-tight font-semibold normal-case sm:text-[2rem]">
+      Chalé pequeno ou grande, tem kit para os dois
+    </h2>
+
+    <!-- No celular, os cards rolam para o lado; a partir do tablet, ficam em três colunas. -->
+    <ul class="-mx-4 mt-7 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0">
+      {
+        kits.map((k) => (
+          <li class="w-[78%] shrink-0 snap-start sm:w-auto">
+            <a href={`#kit-${k.id}`} class="group block">
+              <Foto
+                src={fotosKit[k.id].quadrada}
+                alt={fotosKit[k.id].alt}
+                widths={[320, 420, 540, 640, 800]}
+                sizes="(min-width: 1320px) 400px, (min-width: 640px) 31vw, 78vw"
+                class={`${imagem} object-cover`}
+              />
+              <p class="mt-4 font-semibold">
+                {k.nome}, {k.area}
+                <span class={seta} aria-hidden="true">›</span>
+              </p>
+              <p class="mt-1 text-[0.9375rem] text-texto-3">{k.resumo}</p>
+            </a>
+          </li>
+        ))
+      }
+      <li class="w-[78%] shrink-0 snap-start sm:w-auto">
+        <a href="#o-que-vem" class="group block">
+          <!-- [FOTO DO INTERIOR] troque por uma foto de dentro do chalé -->
+          <div class={`${imagem} grid place-items-center border border-dashed border-linha-forte bg-fundo-3 text-sm text-texto-3`}>
+            [FOTO DO INTERIOR]
+          </div>
+          <p class="mt-4 font-semibold">
+            Por dentro
+            <span class={seta} aria-hidden="true">›</span>
+          </p>
+          <p class="mt-1 text-[0.9375rem] text-texto-3">Sala, cozinha e quartos em madeira de lei.</p>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>

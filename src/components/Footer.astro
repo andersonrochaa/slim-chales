@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/images/logo-slim-chales.png';
+import { empresa, entrega, instagram, kits, linkWhatsapp } from '../data/conteudo';
+
+const ano = new Date().getFullYear();
+const link = 'underline-offset-4 hover:text-texto hover:underline';
+const externo = { target: '_blank', rel: 'noopener' };
+---
+
+<footer class="border-t border-linha">
+  <div class="container-site">
+    <div class="flex flex-col gap-8 border-b border-linha py-16 md:flex-row md:items-center md:justify-between md:py-20">
+      <h2 class="max-w-[38rem] text-4xl leading-[0.95] font-bold sm:text-5xl">Fale com a gente sobre o seu chalé</h2>
+      <div class="flex flex-wrap gap-3">
+        <a href="#contato" class="btn btn-primario">Pedir orçamento</a>
+        <a href={linkWhatsapp} {...externo} class="btn btn-secundario">WhatsApp</a>
+      </div>
+    </div>
+
+    <div class="grid gap-x-8 gap-y-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <Image src={logo} alt="Slim Chalés" height={72} densities={[1, 2, 3]} class="h-[4.5rem] w-auto" />
+        <p class="mt-4 max-w-[17rem] text-texto-3">{empresa.descricao}</p>
+      </div>
+
+      <nav aria-labelledby="rodape-kits">
+        <h3 id="rodape-kits" class="rotulo font-sans">Kits</h3>
+        <ul class="mt-4 space-y-2.5 text-texto-2">
+          {
+            kits.map((k) => (
+              <li>
+                <a href={`#kit-${k.id}`} class={link}>
+                  {k.nome}, {k.preco}
+                </a>
+              </li>
+            ))
+          }
+          <li><a href="#o-que-vem" class={link}>O que vem no kit</a></li>
+          <li><a href="#como-funciona" class={link}>Como funciona</a></li>
+        </ul>
+      </nav>
+
+      <div>
+        <h3 class="rotulo font-sans">Entrega</h3>
+        <ul class="mt-4 space-y-2.5 text-texto-2">
+          <li>Até {entrega.prazo} após o pagamento</li>
+          <li>Frete grátis {entrega.freteGratis}</li>
+          <li>Montagem opcional, orçada à parte</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="rotulo font-sans">Contato</h3>
+        <ul class="mt-4 space-y-2.5 text-texto-2">
+          <li><a href={linkWhatsapp} {...externo} class={link}>WhatsApp {empresa.whatsappExibicao}</a></li>
+          <li>{empresa.email}</li>
+          <li>
+            <a href={instagram.principal.url} {...externo} class={link}>Instagram @{instagram.principal.usuario}</a>
+          </li>
+          <li>{empresa.cidade}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-4 border-t border-linha py-6 text-sm text-texto-3 md:flex-row md:items-center md:justify-between">
+      <p>© {ano} {empresa.nome}. CNPJ {empresa.cnpj}</p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-2">
+        <li><a href={instagram.slimImoveis.url} {...externo} class={link}>Slim Imóveis</a></li>
+        <li><a href={instagram.fundador.url} {...externo} class={link}>{instagram.fundador.nome}, fundador</a></li>
+        <li>
+          <a href="#topo" class:list={[link, 'inline-flex items-center gap-1.5']}>
+            Voltar ao topo
+            <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M2 7.5l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+            </svg>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,17 @@
+---
+// Usada só quando o formulário é enviado sem JavaScript.
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base title="Pedido enviado | Slim Chalés" description="Recebemos o seu pedido de orçamento." noindex>
+  <Header />
+  <main id="conteudo" class="container-site py-24">
+    <p class="rotulo">Orçamento</p>
+    <h1 class="mt-3 text-5xl leading-none font-bold">Pedido enviado</h1>
+    <p class="mt-5 max-w-lg text-lg text-texto-2">A nossa equipe vai responder por e-mail.</p>
+    <a href="/" class="btn btn-secundario mt-8">Voltar ao início</a>
+  </main>
+  <Footer />
+</Base>

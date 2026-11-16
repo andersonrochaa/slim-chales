@@ -1,0 +1,112 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Destaques from '../components/Destaques.astro';
+import Kits from '../components/Kits.astro';
+import OQueVem from '../components/OQueVem.astro';
+import ComoFunciona from '../components/ComoFunciona.astro';
+import Contato from '../components/Contato.astro';
+import Footer from '../components/Footer.astro';
+import { empresa, instagram, kits } from '../data/conteudo';
+import { fotosKit, imagensParaBusca } from '../data/imagens';
+
+const titulo = 'Kits de chalés A-frame em madeira de lei | Slim Chalés';
+const descricao =
+  'Kits de chalés A-frame em madeira de lei, com telhas ecológicas: Kit Sol (28,5 m², R$ 29.000) e Kit Rio (54 m², R$ 59.000). Frete grátis até 100 km de Aracaju.';
+
+// Dados estruturados (schema.org) para o Google entender a empresa e os kits.
+// Itens ainda [entre colchetes] em conteudo.ts ficam de fora até serem preenchidos.
+const raiz = new URL('/', Astro.site);
+const abs = (caminho: string) => new URL(caminho, raiz).href;
+const preenchido = (v: string) => !v.trim().startsWith('[');
+const { kits: fotos } = await imagensParaBusca(raiz);
+const idOrganizacao = abs('/#organizacao');
+const imagemObjeto = (f: { url: string; width: number; height: number }, legenda: string) => ({
+  '@type': 'ImageObject',
+  url: f.url,
+  contentUrl: f.url,
+  width: f.width,
+  height: f.height,
+  caption: legenda,
+});
+
+const dados = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': idOrganizacao,
+      name: empresa.nome,
+      url: raiz.href,
+      logo: { '@type': 'ImageObject', url: abs('/logo-slim-chales-512.png'), width: 512, height: 512 },
+      image: [fotos.rio.padrao.url, fotos.sol.padrao.url],
+      description: empresa.descricao,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: empresa.localidade,
+        addressRegion: empresa.uf,
+        addressCountry: 'BR',
+      },
+      founder: { '@type': 'Person', name: instagram.fundador.nome, sameAs: [instagram.fundador.url] },
+      sameAs: [instagram.principal.url],
+      ...(preenchido(empresa.whatsappExibicao) && { telephone: `+${empresa.whatsapp}` }),
+      ...(preenchido(empresa.email) && { email: empresa.email }),
+    },
+    {
+      '@type': 'WebSite',
+      '@id': abs('/#site'),
+      url: raiz.href,
+      name: empresa.nome,
+      inLanguage: 'pt-BR',
+      publisher: { '@id': idOrganizacao },
+    },
+    {
+      '@type': 'WebPage',
+      '@id': abs('/#pagina'),
+      url: raiz.href,
+      name: titulo,
+      description: descricao,
+      inLanguage: 'pt-BR',
+      isPartOf: { '@id': abs('/#site') },
+      about: { '@id': idOrganizacao },
+      primaryImageOfPage: imagemObjeto(fotos.rio.padrao, fotosKit.rio.alt),
+      image: kits.flatMap((k) => [imagemObjeto(fotos[k.id].padrao, fotosKit[k.id].alt), imagemObjeto(fotos[k.id].planta, `Planta baixa do ${k.nome}, ${k.planta}`)]),
+    },
+    ...kits.map((k) => ({
+      '@type': 'Product',
+      '@id': abs(`/#kit-${k.id}`),
+      name: `${k.nome}, chalé A-frame de ${k.area}`,
+      description: `Kit de chalé A-frame em madeira de lei, com telhas ecológicas. ${k.chamada} ${k.resumo} Planta de ${k.planta}.`,
+      // 1:1, 4:3 e 16:9, como o Google recomenda para produtos
+      image: [fotos[k.id].quadrada.url, fotos[k.id].padrao.url, fotos[k.id].larga.url],
+      brand: { '@type': 'Brand', name: empresa.nome },
+      offers: {
+        '@type': 'Offer',
+        url: abs(`/#kit-${k.id}`),
+        price: k.valor.toFixed(2),
+        priceCurrency: 'BRL',
+        availability: 'https://schema.org/MadeToOrder',
+        itemCondition: 'https://schema.org/NewCondition',
+        seller: { '@id': idOrganizacao },
+      },
+    })),
+  ],
+};
+// "<" escapado para o JSON nunca fechar a tag <script> por engano.
+const jsonLd = JSON.stringify(dados).replace(/</g, '\\u003c');
+---
+
+<Base title={titulo} description={descricao} tituloSocial="Slim Chalés: kits de chalés A-frame para montar no seu terreno">
+  <script type="application/ld+json" slot="head" set:html={jsonLd} />
+  <Header />
+  <main id="conteudo">
+    <Hero />
+    <Destaques />
+    <Kits />
+    <OQueVem />
+    <ComoFunciona />
+    <Contato />
+  </main>
+  <Footer />
+</Base>

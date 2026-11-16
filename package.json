@@ -1,0 +1,30 @@
+{
+  "name": "sunchales",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "modelos": "node scripts/gerar-modelos.mjs"
+  },
+  "dependencies": {
+    "@astrojs/vercel": "^11.0.21",
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@google/model-viewer": "^4.4.0",
+    "astro": "^7.3.8",
+    "resend": "^6.38.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@tailwindcss/vite": "^4.3.5",
+    "@types/node": "^22.20.5",
+    "@types/three": "^0.183.1",
+    "tailwindcss": "^4.3.5",
+    "three": "^0.183.2",
+    "typescript": "^6.0.3"
+  }
+}

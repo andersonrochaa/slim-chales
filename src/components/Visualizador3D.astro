@@ -1,0 +1,152 @@
+---
+import { Image } from 'astro:assets';
+import kitSol from '../assets/images/3d-kit-sol.jpg';
+import kitRio from '../assets/images/3d-kit-rio.jpg';
+import { kits } from '../data/conteudo';
+
+const fotos = { sol: kitSol, rio: kitRio };
+const resumo = (rotulos: string[], especificacoes: [string, string][]) =>
+  especificacoes.filter(([r]) => rotulos.includes(r));
+const rotulosResumo = ['Área total', 'Planta', 'Quartos', 'Varanda'];
+const inicial = kits[0];
+---
+
+<section id="veja-em-3d" aria-labelledby="titulo-3d" class="border-b border-linha py-16 md:py-24">
+  <div class="container-site">
+    <header class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <p class="rotulo">Veja em 3D</p>
+        <h2 id="titulo-3d" class="mt-3 text-4xl leading-none font-bold sm:text-5xl lg:text-6xl">Gire o chalé antes de comprar</h2>
+        <p class="mt-4 text-lg text-texto-2">
+          Arraste para ver de todos os lados. No celular, use a realidade aumentada para ver o chalé em tamanho real no seu
+          terreno.
+        </p>
+      </div>
+      <div role="group" aria-label="Escolha o kit para ver em 3D" class="flex rounded-sm border border-campo p-1">
+        {
+          kits.map((k, i) => (
+            <button
+              type="button"
+              data-kit-3d={k.id}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+              class="min-h-10 rounded-[3px] px-5 text-[0.9375rem] font-medium text-texto-2 transition-colors hover:text-texto aria-pressed:bg-laranja aria-pressed:text-sobre-laranja"
+            >
+              {k.nome}
+            </button>
+          ))
+        }
+      </div>
+    </header>
+
+    <div class="mt-10 grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-12">
+      <div class="relative -mx-4 border-y border-linha sm:mx-0 sm:rounded-sm sm:border">
+        <model-viewer
+          id="visualizador-3d"
+          class="relative block aspect-[4/3] h-auto w-full"
+          data-src-sol="/models/kit-sol.glb"
+          data-src-rio="/models/kit-rio.glb"
+          src="/models/kit-sol.glb"
+          alt={`Modelo 3D do ${inicial.nome}, chalé A-frame com fachada de vidro`}
+          camera-orbit="-32deg 76deg 82%"
+          camera-controls
+          auto-rotate
+          auto-rotate-delay="3000"
+          rotation-per-second="12deg"
+          touch-action="pan-y"
+          interaction-prompt="none"
+          shadow-intensity="1.1"
+          shadow-softness="0.9"
+          exposure="1.05"
+          environment-image="neutral"
+          tone-mapping="neutral"
+          ar
+          ar-modes="webxr scene-viewer quick-look"
+          ar-scale="fixed"
+          ar-placement="floor"
+          loading="lazy"
+          reveal="auto"
+        >
+          <div slot="poster" class="absolute inset-0">
+            {
+              kits.map((k, i) => (
+                <Image
+                  src={fotos[k.id]}
+                  alt={`Foto do ${k.nome}`}
+                  data-poster={k.id}
+                  hidden={i !== 0}
+                  widths={[480, 720, 960, 1280]}
+                  sizes="(min-width: 1320px) 800px, (min-width: 1024px) 62vw, 100vw"
+                  quality={72}
+                  class="size-full object-cover"
+                />
+              ))
+            }
+          </div>
+          <div slot="progress-bar"></div>
+          <button slot="ar-button" type="button" class="btn btn-primario absolute right-3 bottom-3"> Ver no meu terreno </button>
+        </model-viewer>
+      </div>
+
+      <aside aria-live="polite" class="flex flex-col">
+        {
+          kits.map((k, i) => (
+            <div data-painel-3d={k.id} hidden={i !== 0} class="flex h-full flex-col">
+              <p class="font-display text-5xl leading-none font-bold uppercase">{k.nome}</p>
+              <p class="mt-2 text-texto-2">{k.chamada}</p>
+              <dl class="mt-6 text-[0.9375rem]">
+                {resumo(rotulosResumo, k.especificacoes).map(([r, v]) => (
+                  <div class="flex justify-between gap-4 border-b border-linha py-2.5 first:border-t">
+                    <dt class="text-texto-3">{r}</dt>
+                    <dd class="text-right">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p class="mt-6 text-sm text-texto-3">
+                Arraste para girar. Use dois dedos ou a roda do mouse para aproximar.
+              </p>
+              <a href="#contato" data-kit={k.nome} class="btn btn-secundario mt-6 self-start lg:mt-auto">
+                Orçar {k.nome}
+              </a>
+            </div>
+          ))
+        }
+      </aside>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { carregarModelViewer, reduzirMovimento } from '../scripts/model-viewer';
+
+  const secao = document.getElementById('veja-em-3d');
+  const mv = document.getElementById('visualizador-3d');
+
+  if (secao && mv) {
+    if (reduzirMovimento()) mv.removeAttribute('auto-rotate');
+
+    // Só baixa o model-viewer quando a seção chega perto da tela.
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        if (entradas.some((e) => e.isIntersecting)) {
+          observador.disconnect();
+          void carregarModelViewer();
+        }
+      },
+      { rootMargin: '300px 0px' },
+    );
+    observador.observe(secao);
+
+    const botoes = secao.querySelectorAll<HTMLButtonElement>('[data-kit-3d]');
+    botoes.forEach((botao) =>
+      botao.addEventListener('click', () => {
+        const id = botao.dataset.kit3d!;
+        botoes.forEach((b) => b.setAttribute('aria-pressed', String(b === botao)));
+        secao.querySelectorAll<HTMLElement>('[data-poster]').forEach((img) => (img.hidden = img.dataset.poster !== id));
+        secao.querySelectorAll<HTMLElement>('[data-painel-3d]').forEach((p) => (p.hidden = p.dataset.painel3d !== id));
+        mv.setAttribute('alt', `Modelo 3D do ${botao.textContent?.trim()}, chalé A-frame com fachada de vidro`);
+        // setAttribute (e não mv.src) funciona antes e depois de o model-viewer carregar
+        mv.setAttribute('src', mv.dataset[id === 'sol' ? 'srcSol' : 'srcRio']!);
+      }),
+    );
+  }
+</script>
