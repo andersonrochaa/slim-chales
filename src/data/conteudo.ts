@@ -30,7 +30,7 @@ export const entrega = {
   freteGratis: 'até 100 km de Aracaju',
 };
 
-export type KitId = 'sol' | 'rio';
+export type KitId = 'airbnb' | 'sol' | 'rio';
 
 export interface Kit {
   id: KitId;
@@ -39,48 +39,69 @@ export interface Kit {
   area: string;
   chamada: string;
   resumo: string;
-  preco: string;
-  valor: number; // preço em reais, para os dados estruturados do Google
   planta: string;
+  /** Preços em reais. O mezanino é opcional em todos os kits. */
+  precos: { semMezanino: number; comMezanino: number };
   especificacoes: [rotulo: string, valor: string][];
 }
 
+const formatoReal = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+/** R$ 29.000 (com espaço que não quebra entre "R$" e o número). */
+export const real = (valor: number) => formatoReal.format(valor);
+
+// Ordem do menor para o maior.
 export const kits: Kit[] = [
+  {
+    id: 'airbnb',
+    nome: 'Kit Airbnb',
+    destaque: 'Airbnb',
+    area: '15,6 m²',
+    chamada: 'O mais compacto dos três.',
+    resumo: 'Compacto, com varanda na frente e pé-direito de 4 m.',
+    planta: '3,00 x 4,00 m',
+    precos: { semMezanino: 20000, comMezanino: 29000 },
+    especificacoes: [
+      ['Varanda', '3,00 x 1,20 m (3,6 m²)'],
+      ['Pé-direito', '4,00 m'],
+      ['Mezanino', 'Opcional'],
+    ],
+  },
   {
     id: 'sol',
     nome: 'Kit Sol',
     destaque: 'Sol',
-    area: '28,5 m²',
+    area: '28,2 m²',
     chamada: 'Compacto e funcional.',
     resumo: 'Um quarto, sala e cozinha integradas e varanda na frente.',
-    preco: 'R$ 29.000',
-    valor: 29000,
     planta: '3,00 x 5,00 m',
+    precos: { semMezanino: 29000, comMezanino: 57500 },
     especificacoes: [
       ['Quartos', '1'],
-      ['Sala', 'Integrada'],
-      ['Cozinha', 'Integrada'],
-      ['Varanda', 'Frontal'],
+      ['Varanda', '3,00 x 2,00 m (6 m²)'],
+      ['Pé-direito', '6,00 m'],
+      ['Mezanino', '6,60 m², opcional'],
     ],
   },
   {
     id: 'rio',
     nome: 'Kit Rio',
     destaque: 'Rio',
-    area: '54 m²',
+    area: '50,2 m²',
     chamada: 'Mais espaço para o seu projeto.',
     resumo: 'Dois quartos e uma varanda maior na frente.',
-    preco: 'R$ 59.000',
-    valor: 59000,
     planta: '4,00 x 8,00 m',
+    precos: { semMezanino: 59000, comMezanino: 110500 },
     especificacoes: [
       ['Quartos', '2'],
-      ['Sala', 'Integrada'],
-      ['Cozinha', 'Integrada'],
-      ['Varanda', 'Frontal maior'],
+      ['Varanda', '4,00 x 2,00 m (8 m²)'],
+      ['Pé-direito', '6,00 m'],
+      ['Mezanino', '10,2 m², opcional'],
     ],
   },
 ];
+
+/** Menor preço entre todos os kits (sem mezanino). */
+export const precoInicial = Math.min(...kits.map((k) => k.precos.semMezanino));
 
 export const itensDoKit = [
   {
@@ -104,7 +125,7 @@ export const itensDoKit = [
 export const passos = [
   {
     titulo: 'Escolha o kit',
-    texto: 'Sol ou Rio, conforme o espaço que você precisa.',
+    texto: 'Airbnb, Sol ou Rio, conforme o espaço que você precisa.',
   },
   {
     titulo: 'Peça o orçamento',
@@ -122,9 +143,11 @@ export const passos = [
 
 // Opções do formulário. A API valida contra estas mesmas listas.
 export const opcoesKit = [
-  ...kits.map((k) => ({ valor: k.nome, texto: `${k.nome}, ${k.area}, ${k.preco}` })),
+  ...kits.map((k) => ({ valor: k.nome, texto: `${k.nome}, ${k.area}` })),
   { valor: 'Ainda não sei', texto: 'Ainda não sei' },
 ];
+
+export const opcoesMezanino = ['Com mezanino', 'Sem mezanino', 'Ainda não sei'];
 
 // Textos curtos para caber no select em celulares de 360 px.
 export const opcoesMontagem = [

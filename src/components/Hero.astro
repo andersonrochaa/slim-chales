@@ -16,7 +16,7 @@ const [desktopAvif, desktopWebp, celularAvif] = await Promise.all([
 const tamanhoDesktop = '(min-width: 1320px) 676px, 52vw';
 const tamanhoCelular = 'calc(100vw - 2rem)';
 
-const numeros = [...kits.map((k) => ({ valor: k.area, legenda: k.nome })), { valor: '1 ou 2', legenda: 'quartos' }];
+const numeros = kits.map((k) => ({ valor: k.area, legenda: k.nome }));
 ---
 
 <section aria-labelledby="titulo-hero" class="pt-6 sm:pt-10 lg:pt-14">
@@ -69,8 +69,8 @@ const numeros = [...kits.map((k) => ({ valor: k.area, legenda: k.nome })), { val
         Kits de chalés <span class="whitespace-nowrap">A-frame</span> para montar no seu terreno
       </h1>
       <p class="mt-6 max-w-[33rem] text-lg text-texto-2">
-        Feitos em madeira de lei, com telhas ecológicas. São dois tamanhos, e os dois têm sala e cozinha integradas e
-        varanda na frente.
+        Feitos em madeira de lei, com telhas ecológicas. São três tamanhos, todos com varanda na frente, e o mezanino é
+        opcional.
       </p>
       <div class="mt-8 flex flex-wrap gap-3">
         <a href="#kits" class="btn btn-primario">Ver os kits</a>

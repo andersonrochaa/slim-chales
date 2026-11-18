@@ -1,8 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import Foto from './Foto.astro';
-import { kits } from '../data/conteudo';
+import { kits, real } from '../data/conteudo';
 import { fotosKit as imagens } from '../data/imagens';
+
 ---
 
 <section id="kits" aria-labelledby="titulo-kits" class="border-t border-linha bg-fundo-2 py-16 md:py-28">
@@ -11,44 +12,48 @@ import { fotosKit as imagens } from '../data/imagens';
       <h2 id="titulo-kits" class="text-5xl leading-[0.95] font-bold lg:text-[4rem]">
         Qual kit combina <br class="hidden sm:inline" />com <span class="text-laranja">você?</span>
       </h2>
-      <p class="max-w-[23rem] text-lg text-texto-2 lg:mr-10">Os dois kits têm a mesma proposta. O que muda é o tamanho.</p>
+      <p class="max-w-[24rem] text-lg text-texto-2 lg:mr-10">
+        Os três kits têm a mesma proposta. O que muda é o tamanho, e o mezanino é opcional em todos.
+      </p>
     </header>
 
-    <div class="mt-12 grid gap-20 md:mt-16 lg:grid-cols-2 lg:gap-10">
+    <div class="mt-12 grid gap-x-8 gap-y-20 md:mt-16 md:grid-cols-2 xl:grid-cols-3">
       {
-        kits.map((kit) => (
-          <article id={`kit-${kit.id}`} aria-labelledby={`titulo-${kit.id}`} class="flex flex-col">
-            <Foto
-              src={imagens[kit.id].foto}
-              alt={imagens[kit.id].alt}
-              widths={[400, 560, 720, 900, 1200]}
-              sizes="(min-width: 1320px) 600px, (min-width: 1024px) 46vw, calc(100vw - 2rem)"
-              class="aspect-[4/3] w-full rounded-sm object-cover"
-            />
+        kits.map((kit) => {
+          const fotos = imagens[kit.id];
+          return (
+            <article id={`kit-${kit.id}`} aria-labelledby={`titulo-${kit.id}`} class="flex flex-col">
+              <Foto
+                src={fotos.foto}
+                alt={fotos.alt}
+                widths={[400, 560, 720, 900, 1200]}
+                sizes="(min-width: 1320px) 387px, (min-width: 1280px) 30vw, (min-width: 768px) 46vw, calc(100vw - 2rem)"
+                class="aspect-[4/3] w-full rounded-sm object-cover"
+              />
 
-            <div class="mt-7 flex items-end justify-between gap-4 border-b border-linha pb-5">
-              <h3 id={`titulo-${kit.id}`} class="text-5xl leading-none font-bold">
-                Kit <span class="text-laranja">{kit.destaque}</span>
-              </h3>
-              <p class="font-display text-4xl leading-none font-semibold whitespace-nowrap">{kit.area}</p>
-            </div>
+              <div class="mt-7 flex items-end justify-between gap-4 border-b border-linha pb-5">
+                <h3 id={`titulo-${kit.id}`} class="text-5xl leading-none font-bold">
+                  Kit <span class="text-laranja">{kit.destaque}</span>
+                </h3>
+                <p class="font-display text-4xl leading-none font-semibold whitespace-nowrap">{kit.area}</p>
+              </div>
 
-            <div class="mt-7 grid grow grid-cols-[minmax(0,1fr)_minmax(0,1.85fr)] gap-x-5 sm:gap-x-7">
-              <figure class="self-start">
-                <Image
-                  src={imagens[kit.id].planta}
-                  alt={`Planta baixa do ${kit.nome}: ${kit.especificacoes.map(([r, v]) => `${r.toLowerCase()} ${v.toLowerCase()}`).join(', ')}`}
-                  widths={[200, 300, 400]}
-                  sizes="(min-width: 1024px) 200px, 30vw"
-                  quality={80}
-                  class="w-full rounded-sm"
-                />
-                <figcaption class="mt-3 text-sm text-texto-3">Planta de {kit.planta}</figcaption>
-              </figure>
+              <p class="mt-5 text-texto-2">{kit.chamada}</p>
 
-              <div class="flex flex-col">
-                <p class="text-texto-2">{kit.chamada}</p>
-                <dl class="mt-3 text-[0.9375rem]">
+              <div class="mt-4 grid grow grid-cols-[6.5rem_minmax(0,1fr)] gap-x-5 sm:grid-cols-[7.5rem_minmax(0,1fr)]">
+                <figure class="self-start">
+                  <Image
+                    src={fotos.planta}
+                    alt={`Planta baixa do ${kit.nome}, ${kit.planta}`}
+                    widths={[150, 240, 360]}
+                    sizes="120px"
+                    quality={80}
+                    class="w-full rounded-sm"
+                  />
+                  <figcaption class="mt-2 text-sm text-texto-3">Planta de {kit.planta}</figcaption>
+                </figure>
+
+                <dl class="self-start text-[0.9375rem]">
                   {kit.especificacoes.map(([rotulo, valor]) => (
                     <div class="flex justify-between gap-3 border-t border-linha py-3 last:border-b">
                       <dt class="text-texto-3">{rotulo}</dt>
@@ -56,18 +61,26 @@ import { fotosKit as imagens } from '../data/imagens';
                     </div>
                   ))}
                 </dl>
-                <div class="mt-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-3 pt-7">
-                  <p class="text-texto-3">
-                    Kit por <span class="ml-0.5 text-2xl font-semibold whitespace-nowrap text-texto">{kit.preco}</span>
-                  </p>
-                  <a href="#contato" data-kit={kit.nome} class="btn btn-primario">
-                    Orçar {kit.nome}
-                  </a>
-                </div>
               </div>
-            </div>
-          </article>
-        ))
+
+              <div class="mt-8">
+                <dl class="grid grid-cols-2 gap-x-4 border-t border-linha pt-5">
+                  <div>
+                    <dt class="text-sm text-texto-3">Sem mezanino</dt>
+                    <dd class="mt-1 text-2xl font-semibold whitespace-nowrap">{real(kit.precos.semMezanino)}</dd>
+                  </div>
+                  <div>
+                    <dt class="text-sm text-texto-3">Com mezanino</dt>
+                    <dd class="mt-1 text-2xl font-semibold whitespace-nowrap">{real(kit.precos.comMezanino)}</dd>
+                  </div>
+                </dl>
+                <a href="#contato" data-kit={kit.nome} class="btn btn-primario mt-6">
+                  Orçar {kit.nome}
+                </a>
+              </div>
+            </article>
+          );
+        })
       }
     </div>
   </div>

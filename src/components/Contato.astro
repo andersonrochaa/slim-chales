@@ -1,6 +1,6 @@
 ---
 import { PUBLIC_TURNSTILE_SITE_KEY } from 'astro:env/client';
-import { entrega, linkWhatsapp, opcoesKit, opcoesMontagem } from '../data/conteudo';
+import { entrega, linkWhatsapp, opcoesKit, opcoesMezanino, opcoesMontagem } from '../data/conteudo';
 
 const rotulo = 'mb-2 block text-[0.9375rem] font-medium text-texto-2';
 ---
@@ -50,7 +50,7 @@ const rotulo = 'mb-2 block text-[0.9375rem] font-medium text-texto-2';
         />
         <p id="erro-whatsapp" class="mt-1.5 text-sm text-erro" hidden></p>
       </div>
-      <div class="sm:col-span-2">
+      <div>
         <label for="email" class={rotulo}>E-mail</label>
         <input
           id="email"
@@ -66,14 +66,6 @@ const rotulo = 'mb-2 block text-[0.9375rem] font-medium text-texto-2';
         <p id="erro-email" class="mt-1.5 text-sm text-erro" hidden></p>
       </div>
       <div>
-        <label for="kit" class={rotulo}>Kit de interesse</label>
-        <select id="kit" name="kit" required class="campo" aria-describedby="erro-kit">
-          <option value="" disabled selected>Escolha o kit</option>
-          {opcoesKit.map((k) => <option value={k.valor}>{k.texto}</option>)}
-        </select>
-        <p id="erro-kit" class="mt-1.5 text-sm text-erro" hidden></p>
-      </div>
-      <div>
         <label for="cidade" class={rotulo}>Cidade do terreno</label>
         <input
           id="cidade"
@@ -87,6 +79,22 @@ const rotulo = 'mb-2 block text-[0.9375rem] font-medium text-texto-2';
           aria-describedby="erro-cidade"
         />
         <p id="erro-cidade" class="mt-1.5 text-sm text-erro" hidden></p>
+      </div>
+      <div>
+        <label for="kit" class={rotulo}>Kit de interesse</label>
+        <select id="kit" name="kit" required class="campo" aria-describedby="erro-kit">
+          <option value="" disabled selected>Escolha o kit</option>
+          {opcoesKit.map((k) => <option value={k.valor}>{k.texto}</option>)}
+        </select>
+        <p id="erro-kit" class="mt-1.5 text-sm text-erro" hidden></p>
+      </div>
+      <div>
+        <label for="mezanino" class={rotulo}>Mezanino</label>
+        <select id="mezanino" name="mezanino" required class="campo" aria-describedby="erro-mezanino">
+          <option value="" disabled selected>Com ou sem?</option>
+          {opcoesMezanino.map((m) => <option value={m}>{m}</option>)}
+        </select>
+        <p id="erro-mezanino" class="mt-1.5 text-sm text-erro" hidden></p>
       </div>
       <div class="sm:col-span-2">
         <label for="montagem" class={rotulo}>Montagem</label>
@@ -201,6 +209,7 @@ const rotulo = 'mb-2 block text-[0.9375rem] font-medium text-texto-2';
     email: 'Informe um e-mail válido.',
     kit: 'Escolha um kit ou "Ainda não sei".',
     cidade: 'Informe a cidade do terreno.',
+    mezanino: 'Escolha com ou sem mezanino.',
     montagem: 'Escolha uma opção de montagem.',
   };
 

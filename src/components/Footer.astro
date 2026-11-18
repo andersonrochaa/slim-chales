@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/images/logo-slim-chales.png';
-import { empresa, entrega, instagram, kits, linkWhatsapp } from '../data/conteudo';
+import { empresa, entrega, instagram, kits, linkWhatsapp, real } from '../data/conteudo';
 
 const ano = new Date().getFullYear();
 const link = 'underline-offset-4 hover:text-texto hover:underline';
@@ -31,7 +31,7 @@ const externo = { target: '_blank', rel: 'noopener' };
             kits.map((k) => (
               <li>
                 <a href={`#kit-${k.id}`} class={link}>
-                  {k.nome}, {k.preco}
+                  {k.nome}, a partir de {real(k.precos.semMezanino)}
                 </a>
               </li>
             ))

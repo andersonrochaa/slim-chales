@@ -8,13 +8,12 @@ import OQueVem from '../components/OQueVem.astro';
 import ComoFunciona from '../components/ComoFunciona.astro';
 import Contato from '../components/Contato.astro';
 import Footer from '../components/Footer.astro';
-import { empresa, instagram, kits } from '../data/conteudo';
+import { empresa, instagram, kits, precoInicial, real } from '../data/conteudo';
 import { fotosKit, imagensParaBusca } from '../data/imagens';
 import { raizDoSite } from '../lib/site';
 
 const titulo = 'Kits de chalés A-frame em madeira de lei | Slim Chalés';
-const descricao =
-  'Kits de chalés A-frame em madeira de lei, com telhas ecológicas: Kit Sol (28,5 m², R$ 29.000) e Kit Rio (54 m², R$ 59.000). Frete grátis até 100 km de Aracaju.';
+const descricao = `Kits de chalés A-frame em madeira de lei: Airbnb (15,6 m²), Sol (28,2 m²) e Rio (50,2 m²), a partir de ${real(precoInicial)}. Frete grátis até 100 km de Aracaju.`;
 
 // Dados estruturados (schema.org) para o Google entender a empresa e os kits.
 // Itens ainda [entre colchetes] em conteudo.ts ficam de fora até serem preenchidos.
@@ -42,7 +41,7 @@ const dados = {
       name: empresa.nome,
       url: raiz.href,
       logo: { '@type': 'ImageObject', url: abs('/logo-slim-chales-512.png'), width: 512, height: 512 },
-      image: [fotos.rio.padrao.url, fotos.sol.padrao.url],
+      image: kits.map((k) => fotos[k.id].padrao.url),
       description: empresa.descricao,
       address: {
         '@type': 'PostalAddress',
@@ -73,26 +72,35 @@ const dados = {
       isPartOf: { '@id': abs('/#site') },
       about: { '@id': idOrganizacao },
       primaryImageOfPage: imagemObjeto(fotos.rio.padrao, fotosKit.rio.alt),
-      image: kits.flatMap((k) => [imagemObjeto(fotos[k.id].padrao, fotosKit[k.id].alt), imagemObjeto(fotos[k.id].planta, `Planta baixa do ${k.nome}, ${k.planta}`)]),
+      image: kits.flatMap((k) => [
+        imagemObjeto(fotos[k.id].padrao, fotosKit[k.id].alt),
+        imagemObjeto(fotos[k.id].planta, `Planta baixa do ${k.nome}, ${k.planta}`),
+      ]),
     },
-    ...kits.map((k) => ({
-      '@type': 'Product',
-      '@id': abs(`/#kit-${k.id}`),
-      name: `${k.nome}, chalé A-frame de ${k.area}`,
-      description: `Kit de chalé A-frame em madeira de lei, com telhas ecológicas. ${k.chamada} ${k.resumo} Planta de ${k.planta}.`,
-      // 1:1, 4:3 e 16:9, como o Google recomenda para produtos
-      image: [fotos[k.id].quadrada.url, fotos[k.id].padrao.url, fotos[k.id].larga.url],
-      brand: { '@type': 'Brand', name: empresa.nome },
-      offers: {
-        '@type': 'Offer',
-        url: abs(`/#kit-${k.id}`),
-        price: k.valor.toFixed(2),
-        priceCurrency: 'BRL',
-        availability: 'https://schema.org/MadeToOrder',
-        itemCondition: 'https://schema.org/NewCondition',
-        seller: { '@id': idOrganizacao },
-      },
-    })),
+    ...kits.map((k) => {
+      const f = fotos[k.id];
+      return {
+        '@type': 'Product',
+        '@id': abs(`/#kit-${k.id}`),
+        name: `${k.nome}, chalé A-frame de ${k.area}`,
+        description: `Kit de chalé A-frame em madeira de lei, com telhas ecológicas. ${k.chamada} ${k.resumo} Planta de ${k.planta}. Mezanino opcional.`,
+        // 1:1, 4:3 e 16:9, como o Google recomenda para produtos
+        image: [f.quadrada.url, f.padrao.url, f.larga.url],
+        brand: { '@type': 'Brand', name: empresa.nome },
+        // Dois preços: sem e com mezanino.
+        offers: {
+          '@type': 'AggregateOffer',
+          url: abs(`/#kit-${k.id}`),
+          priceCurrency: 'BRL',
+          lowPrice: k.precos.semMezanino.toFixed(2),
+          highPrice: k.precos.comMezanino.toFixed(2),
+          offerCount: 2,
+          availability: 'https://schema.org/MadeToOrder',
+          itemCondition: 'https://schema.org/NewCondition',
+          seller: { '@id': idOrganizacao },
+        },
+      };
+    }),
   ],
 };
 // "<" escapado para o JSON nunca fechar a tag <script> por engano.

@@ -7,24 +7,40 @@ import rioDestaque from '../assets/images/chale-a-frame-54m2-kit-rio-destaque.jp
 import rioQuadrada from '../assets/images/chale-a-frame-54m2-kit-rio-quadrado.jpg';
 import sol from '../assets/images/chale-a-frame-28m2-kit-sol.jpg';
 import solQuadrada from '../assets/images/chale-a-frame-28m2-kit-sol-quadrado.jpg';
+import airbnb from '../assets/images/chale-a-frame-15m2-kit-airbnb.jpg';
+import airbnbQuadrada from '../assets/images/chale-a-frame-15m2-kit-airbnb-quadrado.jpg';
+import plantaAirbnb from '../assets/images/planta-airbnb.jpg';
 import plantaRio from '../assets/images/planta-rio.jpg';
 import plantaSol from '../assets/images/planta-sol.jpg';
 import type { KitId } from './conteudo';
 
-export const fotosKit = {
+interface FotosDoKit {
+  foto: ImageMetadata; // 4:3, inteira
+  quadrada: ImageMetadata;
+  planta: ImageMetadata;
+  alt: string;
+}
+
+export const fotosKit: Record<KitId, FotosDoKit> = {
+  airbnb: {
+    foto: airbnb,
+    quadrada: airbnbQuadrada,
+    planta: plantaAirbnb,
+    alt: 'Chalé A-frame de 15,6 m² (Kit Airbnb) entre árvores, com porta de vidro, quarto à vista e deck de madeira',
+  },
   rio: {
     foto: rio, // 4:3, inteira
     quadrada: rioQuadrada,
     planta: plantaRio,
-    alt: 'Chalé A-frame de 54 m² (Kit Rio) no fim da tarde, com fachada de vidro em dois níveis e deck de madeira',
+    alt: 'Chalé A-frame de 50,2 m² (Kit Rio) no fim da tarde, com fachada de vidro em dois níveis e deck de madeira',
   },
   sol: {
     foto: sol,
     quadrada: solQuadrada,
     planta: plantaSol,
-    alt: 'Chalé A-frame de 28,5 m² (Kit Sol) ao entardecer, com portas de vidro, deck de madeira e jardim iluminado',
+    alt: 'Chalé A-frame de 28,2 m² (Kit Sol) ao entardecer, com portas de vidro, deck de madeira e jardim iluminado',
   },
-} satisfies Record<KitId, unknown>;
+};
 
 // Qualidade por formato (AVIF e WebP não usam a mesma escala).
 export const qualidadeFoto = { avif: 50, webp: 68 };
@@ -43,8 +59,7 @@ export async function imagensParaBusca(site: URL) {
     return { url: abs(img.src), width, height: height ?? Math.round((src.height / src.width) * width) };
   };
 
-  const versoesDoKit = async (id: KitId) => {
-    const f = fotosKit[id];
+  const versoesDoKit = async (f: FotosDoKit) => {
     const [quadrada, padrao, larga, planta] = await Promise.all([
       jpg(f.quadrada, Math.min(1200, f.quadrada.width)),
       jpg(f.foto, 1200),
@@ -54,10 +69,12 @@ export async function imagensParaBusca(site: URL) {
     return { quadrada, padrao, larga, planta };
   };
 
-  const [rio, sol, compartilhamento] = await Promise.all([
-    versoesDoKit('rio'),
-    versoesDoKit('sol'),
+  const [airbnb, sol, rio, compartilhamento] = await Promise.all([
+    versoesDoKit(fotosKit.airbnb),
+    versoesDoKit(fotosKit.sol),
+    versoesDoKit(fotosKit.rio),
     jpg(fotosKit.rio.foto, 1200, 630),
   ]);
-  return { kits: { rio, sol } satisfies Record<KitId, unknown>, compartilhamento };
+  const kits: Record<KitId, Awaited<ReturnType<typeof versoesDoKit>>> = { airbnb, sol, rio };
+  return { kits, compartilhamento };
 }

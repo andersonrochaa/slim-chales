@@ -2,9 +2,11 @@
 import { Image } from 'astro:assets';
 import kitSol from '../assets/images/3d-kit-sol.jpg';
 import kitRio from '../assets/images/3d-kit-rio.jpg';
-import { kits } from '../data/conteudo';
+import { kits as todosOsKits } from '../data/conteudo';
 
 const fotos = { sol: kitSol, rio: kitRio };
+// Só os kits que têm modelo 3D.
+const kits = todosOsKits.filter((k): k is (typeof k & { id: keyof typeof fotos }) => k.id in fotos);
 const resumo = (rotulos: string[], especificacoes: [string, string][]) =>
   especificacoes.filter(([r]) => rotulos.includes(r));
 const rotulosResumo = ['Área total', 'Planta', 'Quartos', 'Varanda'];

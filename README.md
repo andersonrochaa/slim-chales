@@ -21,14 +21,14 @@ O layout segue o protótipo em `referencias/imagens/` (fora de `public/` para n�
 | O que acompanha "Portas e janelas" e "Projeto e manual de montagem" | `src/data/conteudo.ts` → `itensDoKit` |
 | Foto do interior (card "Por dentro") | `src/components/Destaques.astro` |
 
-Preços (R$ 29.000 e R$ 59.000), prazo (60 dias úteis), frete grátis até 100 km de Aracaju e as medidas vêm do protótipo e do card de informações (`referencias/imagens/infos.jpeg`).
+Kits e preços (sem / com mezanino): Airbnb 15,6 m² (R$ 20.000 / R$ 29.000), Sol 28,2 m² (R$ 29.000 / R$ 57.500) e Rio 50,2 m² (R$ 59.000 / R$ 110.500), conforme a tabela enviada pela empresa. Prazo (60 dias úteis) e frete grátis até 100 km de Aracaju vêm do protótipo.
 
 ### Imagens
 
-- Fotos dos chalés: `src/assets/images/chale-a-frame-54m2-kit-rio*.jpg` (Kit Rio) e `chale-a-frame-28m2-kit-sol*.jpg` (Kit Sol), em três versões: 4:3 inteira, quadrada (cards) e, no Rio, um recorte alto para o banner no desktop. O nome do arquivo aparece no endereço final da imagem e ajuda no Google Imagens. Os originais em PNG ficam em `referencias/fotos/`.
+- Fotos dos chalés: `src/assets/images/chale-a-frame-15m2-kit-airbnb*.jpg` (Kit Airbnb, enviada pela equipe de design), `chale-a-frame-28m2-kit-sol*.jpg` (Kit Sol) e `chale-a-frame-54m2-kit-rio*.jpg` (Kit Rio), em até três versões: 4:3 inteira, quadrada (cards) e, no Rio, um recorte alto para o banner no desktop. O nome do arquivo aparece no endereço final da imagem e ajuda no Google Imagens. Os originais em PNG ficam em `referencias/fotos/`.
 - **As duas fotos foram geradas por IA** (o PNG original traz a assinatura C2PA da OpenAI, que some ao converter). Troque por fotos de um chalé construído assim que houver.
 - Fotos e textos alternativos ficam num lugar só: `src/data/imagens.ts`. Banner, cards e fotos dos kits saem em AVIF (qualidade 50), com WebP (68) de reserva, pelo componente `src/components/Foto.astro`.
-- Plantas (`planta-*.jpg`) foram recortadas do protótipo.
+- Plantas (`planta-*.jpg`): as do Sol e do Rio foram recortadas do protótipo; a do Airbnb, da prancha da equipe de design (`referencias/imagens/planta-kit-airbnb-original.png`).
 - `logo-slim-chales.png`: logo dourado da Slim Chalés (header e rodapé).
 
 ### Vídeo do banner

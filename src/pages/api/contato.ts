@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { Resend } from 'resend';
 import { CONTACT_FROM_EMAIL, CONTACT_TO_EMAIL, RESEND_API_KEY, TURNSTILE_SECRET_KEY } from 'astro:env/server';
-import { opcoesKit, opcoesMontagem } from '../../data/conteudo';
+import { opcoesKit, opcoesMezanino, opcoesMontagem } from '../../data/conteudo';
 
 // Esta é a única rota que roda no servidor (função da Vercel). O resto do site é estático.
 export const prerender = false;
@@ -17,6 +17,7 @@ type Campos = {
   email: string;
   kit: string;
   cidade: string;
+  mezanino: string;
   montagem: string;
   mensagem: string;
 };
@@ -53,6 +54,7 @@ function validar(c: Campos) {
   if (!c.cidade) erros.cidade = 'Informe a cidade do terreno.';
   else if (c.cidade.length > LIMITE.cidade) erros.cidade = `Use no máximo ${LIMITE.cidade} caracteres.`;
 
+  if (!opcoesMezanino.includes(c.mezanino)) erros.mezanino = 'Escolha com ou sem mezanino.';
   if (!opcoesMontagem.includes(c.montagem)) erros.montagem = 'Escolha uma opção de montagem.';
 
   if (c.mensagem.length > LIMITE.mensagem) erros.mensagem = `Use no máximo ${LIMITE.mensagem} caracteres.`;
@@ -83,6 +85,7 @@ function montarEmail(c: Campos) {
     ['E-mail', c.email],
     ['Kit de interesse', c.kit],
     ['Cidade do terreno', c.cidade],
+    ['Mezanino', c.mezanino],
     ['Montagem', c.montagem],
     ['Mensagem', c.mensagem || '(sem mensagem)'],
   ];
@@ -147,6 +150,7 @@ export const POST: APIRoute = async ({ request, clientAddress, url }) => {
     email: linha(dados.email).toLowerCase(),
     kit: linha(dados.kit),
     cidade: linha(dados.cidade),
+    mezanino: linha(dados.mezanino),
     montagem: linha(dados.montagem),
     mensagem: bloco(dados.mensagem),
   };
