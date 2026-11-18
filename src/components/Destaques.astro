@@ -1,9 +1,8 @@
 ---
 import Foto from './Foto.astro';
 import { kits } from '../data/conteudo';
-import { fotosKit } from '../data/imagens';
+import { fotoInterior, fotosKit } from '../data/imagens';
 const imagem = 'aspect-square w-full rounded-lg';
-const reservado = `${imagem} grid place-items-center border border-dashed border-linha-forte bg-fundo-3 text-center text-sm text-texto-3`;
 const seta = 'ml-1.5 inline-block transition-transform group-hover:translate-x-0.5';
 ---
 
@@ -37,15 +36,18 @@ const seta = 'ml-1.5 inline-block transition-transform group-hover:translate-x-0
       }
       <li class="w-[78%] shrink-0 snap-start sm:w-auto">
         <a href="#o-que-vem" class="group block">
-          <!-- [FOTO DO INTERIOR] troque por uma foto de dentro do chalé -->
-          <div class={reservado}>
-            [FOTO DO INTERIOR]
-          </div>
+          <Foto
+            src={fotoInterior.quadrada}
+            alt={fotoInterior.alt}
+            widths={[320, 420, 540, 640, 800]}
+            sizes="(min-width: 1320px) 295px, (min-width: 1024px) 23vw, (min-width: 640px) 46vw, 78vw"
+            class={`${imagem} object-cover`}
+          />
           <p class="mt-4 font-semibold">
             Por dentro
             <span class={seta} aria-hidden="true">›</span>
           </p>
-          <p class="mt-1 text-[0.9375rem] text-texto-3">Sala, cozinha e quartos em madeira de lei.</p>
+          <p class="mt-1 text-[0.9375rem] text-texto-3">Tudo em madeira de lei, do piso ao teto.</p>
         </a>
       </li>
     </ul>

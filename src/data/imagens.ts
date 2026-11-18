@@ -10,6 +10,8 @@ import solQuadrada from '../assets/images/chale-a-frame-28m2-kit-sol-quadrado.jp
 import airbnb from '../assets/images/chale-a-frame-15m2-kit-airbnb.jpg';
 import airbnbQuadrada from '../assets/images/chale-a-frame-15m2-kit-airbnb-quadrado.jpg';
 import plantaAirbnb from '../assets/images/planta-airbnb.jpg';
+import interior from '../assets/images/interior-chale-a-frame-quarto.jpg';
+import interiorQuadrada from '../assets/images/interior-chale-a-frame-quarto-quadrado.jpg';
 import plantaRio from '../assets/images/planta-rio.jpg';
 import plantaSol from '../assets/images/planta-sol.jpg';
 import type { KitId } from './conteudo';
@@ -42,6 +44,13 @@ export const fotosKit: Record<KitId, FotosDoKit> = {
   },
 };
 
+// Card "Por dentro".
+export const fotoInterior = {
+  foto: interior, // 4:3, inteira
+  quadrada: interiorQuadrada,
+  alt: 'Quarto de chalé A-frame todo em madeira, com cama de casal, banheira e porta de vidro para o deck',
+};
+
 // Qualidade por formato (AVIF e WebP não usam a mesma escala).
 export const qualidadeFoto = { avif: 50, webp: 68 };
 
@@ -69,12 +78,13 @@ export async function imagensParaBusca(site: URL) {
     return { quadrada, padrao, larga, planta };
   };
 
-  const [airbnb, sol, rio, compartilhamento] = await Promise.all([
+  const [airbnb, sol, rio, interiorJpg, compartilhamento] = await Promise.all([
     versoesDoKit(fotosKit.airbnb),
     versoesDoKit(fotosKit.sol),
     versoesDoKit(fotosKit.rio),
+    jpg(fotoInterior.foto, 1200),
     jpg(fotosKit.rio.foto, 1200, 630),
   ]);
   const kits: Record<KitId, Awaited<ReturnType<typeof versoesDoKit>>> = { airbnb, sol, rio };
-  return { kits, compartilhamento };
+  return { kits, interior: interiorJpg, compartilhamento };
 }

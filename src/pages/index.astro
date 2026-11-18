@@ -9,7 +9,7 @@ import ComoFunciona from '../components/ComoFunciona.astro';
 import Contato from '../components/Contato.astro';
 import Footer from '../components/Footer.astro';
 import { empresa, instagram, kits, precoInicial, real } from '../data/conteudo';
-import { fotosKit, imagensParaBusca } from '../data/imagens';
+import { fotoInterior, fotosKit, imagensParaBusca } from '../data/imagens';
 import { raizDoSite } from '../lib/site';
 
 const titulo = 'Kits de chalés A-frame em madeira de lei | Slim Chalés';
@@ -21,7 +21,7 @@ const raiz = raizDoSite(Astro.site!);
 // Caminhos relativos à raiz do site (funciona na Vercel e no GitHub Pages, em /slim-chales/).
 const abs = (caminho: string) => new URL(caminho.replace(/^\//, ''), raiz).href;
 const preenchido = (v: string) => !v.trim().startsWith('[');
-const { kits: fotos } = await imagensParaBusca(raiz);
+const { kits: fotos, interior } = await imagensParaBusca(raiz);
 const idOrganizacao = abs('/#organizacao');
 const imagemObjeto = (f: { url: string; width: number; height: number }, legenda: string) => ({
   '@type': 'ImageObject',
@@ -72,10 +72,13 @@ const dados = {
       isPartOf: { '@id': abs('/#site') },
       about: { '@id': idOrganizacao },
       primaryImageOfPage: imagemObjeto(fotos.rio.padrao, fotosKit.rio.alt),
-      image: kits.flatMap((k) => [
-        imagemObjeto(fotos[k.id].padrao, fotosKit[k.id].alt),
-        imagemObjeto(fotos[k.id].planta, `Planta baixa do ${k.nome}, ${k.planta}`),
-      ]),
+      image: [
+        ...kits.flatMap((k) => [
+          imagemObjeto(fotos[k.id].padrao, fotosKit[k.id].alt),
+          imagemObjeto(fotos[k.id].planta, `Planta baixa do ${k.nome}, ${k.planta}`),
+        ]),
+        imagemObjeto(interior, fotoInterior.alt),
+      ],
     },
     ...kits.map((k) => {
       const f = fotos[k.id];
